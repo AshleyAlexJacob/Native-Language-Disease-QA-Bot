@@ -1,0 +1,145 @@
+---
+alwaysApply: true
+---
+## General Principles
+1. Don't create md files until specifically requested.
+2. Follow DRY (Don't Repeat Yourself) approach.
+3. Don't use emojis in readme, md files, logs, or scripts.
+4. Maintain existing folder structure.
+5. Keep files under 200 lines; refactor if exceeding.
+
+## FastAPI Backend (Python)
+
+### Project Structure (OOP Approach)
+- Use class-based services for business logic exclusively.
+- Organize: models, schemas, routes, services, dependencies, core.
+- Create service layer classes for business logic.
+- Use dependency injection via Depends() throughout.
+- Implement mixins for shared functionality across services.
+
+### Models (OOP with SQLAlchemy/ODM)
+- Use declarative base classes with explicit field types.
+- Implement custom methods directly in model classes.
+- Add `__repr__` methods for debugging representations.
+- Use Mixin classes for common fields (timestamps, soft delete).
+- Define relationships with lazy loading strategies.
+
+### Services Layer (OOP)
+- Create service classes to encapsulate all business logic.
+- Keep route handlers thin; delegate to service methods.
+- Example: UserService.create_user(), AIService.generate_response().
+- Use dependency injection for database sessions and configs.
+- Implement async methods for all I/O operations.
+
+### Routes and Endpoints
+- Use APIRouter for modular organization by feature.
+- Implement async route handlers exclusively.
+- Apply response_model for automatic validation.
+- Use dependencies at router or endpoint level for auth/validation.
+- Keep route handlers under 10 lines; delegate to services.
+
+### Schemas (Pydantic)
+- Use Pydantic BaseModel for all request/response validation.
+- Create separate schemas: CreateSchema, UpdateSchema, ResponseSchema.
+- Use Field() for validation constraints, defaults, and examples.
+- Implement @validator for custom field validation.
+- Use ConfigDict(from_attributes=True) for ORM compatibility.
+
+### Dependency Injection
+- Create reusable dependencies in dependencies.py.
+- Implement get_db() for async database session management.
+- Create get_current_user() for authentication checks.
+- Use Depends() at route level for clean injection.
+- Override dependencies in tests for mocking.
+
+### Database Integration
+- Use async SQLAlchemy with AsyncSession exclusively.
+- Implement proper session management with context managers.
+- Use select() for queries with filtering and joins.
+- Configure connection pooling for performance.
+- Implement Alembic for schema migrations.
+
+### AI API Integration
+- Create dedicated service classes per AI provider (OpenAIService, AnthropicService).
+- Use async HTTP clients (httpx.AsyncClient) for all API calls.
+- Implement retry logic with exponential backoff using tenacity.
+- Handle streaming responses with async generators.
+- Implement request/response logging for debugging.
+
+### Authentication & Authorization
+- Use OAuth2PasswordBearer for token-based authentication.
+- Implement JWT tokens with python-jose library.
+- Create permission dependencies (require_auth, require_admin).
+- Hash passwords with passlib[bcrypt].
+- Implement token refresh mechanism for security.
+
+### Error Handling
+- Use HTTPException for all HTTP errors with proper status codes.
+- Create custom exception classes inheriting from Exception.
+- Implement global exception handlers with @app.exception_handler.
+- Return consistent error response format across all endpoints.
+- Log exceptions with full context and traceback.
+
+### Performance Optimization
+- Use async/await for all database and external API calls.
+- Implement connection pooling for databases and HTTP clients.
+- Use BackgroundTasks for operations that don't need immediate response.
+- Cache frequently accessed data with Redis or cachetools.
+- Implement proper pagination with limit/offset or cursor-based.
+
+### Configuration Management
+- Use Pydantic BaseSettings for environment configuration.
+- Create Settings class with validation for all configs.
+- Load environment variables from .env files.
+- Separate configs for dev, staging, production environments.
+- Never hardcode secrets; use environment variables exclusively.
+
+### Middleware
+- Implement CORSMiddleware with specific allowed origins.
+- Add request ID middleware for distributed tracing.
+- Create timing middleware for performance monitoring.
+- Implement rate limiting with slowapi or custom middleware.
+- Add security headers middleware (HSTS, CSP, X-Frame-Options).
+
+### Code Quality
+- Follow PEP 8 style guidelines strictly.
+- Use type hints for all function parameters and return types.
+- Write docstrings for all classes, methods, and functions.
+- Keep functions under 20 lines; extract helpers if exceeding.
+- Use async/await consistently; never use blocking calls.
+
+### Testing
+- Use pytest with pytest-asyncio for all async tests.
+- Create fixtures for database sessions and services.
+- Mock external API calls using pytest-mock or responses.
+- Use httpx.AsyncClient for testing FastAPI endpoints.
+- Write unit tests for services, integration tests for endpoints.
+
+### Security
+- Configure CORS with specific origins, never use wildcard "*".
+- Implement rate limiting on all public endpoints.
+- Validate all inputs using Pydantic schemas.
+- Use parameterized queries via SQLAlchemy to prevent injection.
+- Enable HTTPS in production with proper TLS certificates.
+
+### Logging and Monitoring
+- Use structured logging with loguru or Python logging.
+- Log all errors with full context, user IDs, and request IDs.
+- Implement health check endpoints (/health, /readiness).
+- Add metrics endpoints for Prometheus scraping.
+- Use correlation IDs for distributed request tracing.
+
+### AI-Specific Best Practices
+- Implement token counting before API calls to prevent overruns.
+- Use streaming responses for long-running AI generations.
+- Create reusable prompt templates in separate files.
+- Handle AI API rate limits with retry and queue mechanisms.
+- Implement fallback strategies for AI service failures.
+
+
+### API Documentation
+- FastAPI auto-generates docs at /docs (Swagger) and /redoc.
+- Add summary and description to all route handlers.
+- Use tags parameter to group related endpoints.
+- Include examples in Pydantic schemas with Field(examples=[]).
+- Document all possible response codes with responses parameter.
