@@ -2,6 +2,7 @@ from langchain_openrouter import ChatOpenRouter
 from dotenv import load_dotenv
 from pprint import pprint
 
+
 def main():
     model = ChatOpenRouter(
         model="openai/gpt-oss-120b:free",
@@ -10,7 +11,6 @@ def main():
         max_retries=2,
         # other params...
     )
-
 
     messages = [
         (
@@ -24,8 +24,6 @@ def main():
         file.write(str(ai_msg.content))
 
 
-
-if __name__=="__main__":
+if __name__ == "__main__":
     load_dotenv(".env")
     main()
-

@@ -1,0 +1,4 @@
+document_parser:
+  docs_dir: "docs/who_guides_doc"
+  file_extension: ".pdf"
+  recursive: false
