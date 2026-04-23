@@ -7,6 +7,18 @@ requires-python = ">=3.12"
 dependencies = [
     "langchain-ollama==1.1.0",
     "langchain-openrouter==0.2.1",
+    "langchain-community>=0.4.1",
+    "pypdf>=6.10.2",
+    "pyyaml>=6.0.3",
     "python-dotenv>=1.2.2",
     "ruff>=0.15.11",
+    "chromadb==1.5.8",
+    "langchain-chroma==1.1.0",
+    "langchain-text-splitters==1.1.2",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-cov>=5.0.0",
 ]

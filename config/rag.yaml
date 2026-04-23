@@ -1,0 +1,18 @@
+document_parser:
+  docs_dir: "docs/who_guides_doc"
+  file_extension: ".pdf"
+  recursive: false
+
+chunking:
+  chunk_size: 500
+  chunk_overlap: 50
+
+embeddings:
+  provider: "ollama"
+  model: "nomic-embed-text"
+  base_url: "http://localhost:11434"
+
+vectorstore:
+  type: "chroma"
+  persist_directory: "embeddings/chroma_db"
+  collection_name: "who_health_docs"
