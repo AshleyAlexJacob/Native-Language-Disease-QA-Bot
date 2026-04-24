@@ -4,12 +4,15 @@ import logging
 from pathlib import Path
 
 import yaml
+from dotenv import load_dotenv
 from langchain_core.language_models.chat_models import BaseChatModel
 
 logger = logging.getLogger(__name__)
 
 _PROJECT_ROOT: Path = Path(__file__).resolve().parents[1]
 _DEFAULT_CONFIG_PATH: Path = _PROJECT_ROOT / "config" / "rag.yaml"
+
+load_dotenv(_PROJECT_ROOT / ".env")
 
 
 class LLMFactory:
@@ -61,10 +64,10 @@ class LLMFactory:
         )
 
     def build(self) -> BaseChatModel:
-        """Build and return the configured LLM chain with fallback.
+        """Build and return ChatOllama with ChatOpenRouter as automatic fallback.
 
         Returns:
-            ChatOllama with ChatOpenRouter as automatic fallback.
+            RunnableWithFallbacks: Ollama primary, OpenRouter fallback.
         """
         primary = self._build_ollama()
         fallback = self._build_openrouter()

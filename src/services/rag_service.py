@@ -9,7 +9,7 @@ from langchain_core.prompts import ChatPromptTemplate
 
 from src.llms import LLMFactory
 from src.retrievers.retriever import RAGRetriever
-from src.schemas.pydantic.rag_schemas import QueryRequest, RAGResponse, SourceDocument
+from src.schemas.pydantic.rag_schemas import QueryRequest, SourceDocument
 
 logger = logging.getLogger(__name__)
 
@@ -31,8 +31,8 @@ class RAGService:
     """Orchestrates retrieval and LLM augmentation for the health QA pipeline.
 
     Composes RAGRetriever and LLMFactory. Formats a grounded prompt with
-    numbered context chunks, invokes the LLM with structured output, and
-    returns a validated RAGResponse.
+    numbered context chunks, invokes the LLM, and returns a structured
+    response dict with answer text, source citations, and disclaimer.
 
     Args:
         config_path: Path to rag.yaml. Defaults to config/rag.yaml.
@@ -49,8 +49,7 @@ class RAGService:
         self._prompt = self._load_prompt(
             Path(prompt_path) if prompt_path else _DEFAULT_PROMPT_PATH
         )
-        # Structured output enforces RAGResponse schema on every LLM reply.
-        self._chain = self._prompt | llm.with_structured_output(RAGResponse)
+        self._chain = self._prompt | llm
 
     def _load_prompt(self, prompt_path: Path) -> ChatPromptTemplate:
         if not prompt_path.exists():
@@ -104,7 +103,7 @@ class RAGService:
             }
 
         context = self._format_context(docs)
-        response: RAGResponse = self._chain.invoke({
+        ai_message = self._chain.invoke({
             "context": context,
             "question": request.query,
             "language": request.language,
@@ -112,7 +111,7 @@ class RAGService:
 
         logger.info("RAGService: answered query=%r language=%s", request.query[:80], request.language)
         return {
-            "answer": response.answer,
+            "answer": ai_message.content,
             "sources": [src.model_dump() for src in self._extract_sources(docs)],
-            "disclaimer": response.disclaimer or _DISCLAIMER,
+            "disclaimer": _DISCLAIMER,
         }
