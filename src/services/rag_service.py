@@ -11,6 +11,8 @@ from src.llms import LLMFactory
 from src.retrievers.retriever import RAGRetriever
 from src.schemas.pydantic.rag_schemas import QueryRequest, SourceDocument
 
+from pprint import pprint
+
 logger = logging.getLogger(__name__)
 
 _PROJECT_ROOT: Path = Path(__file__).resolve().parents[2]
@@ -93,6 +95,11 @@ class RAGService:
                 disclaimer (str): Fixed medical safety disclaimer.
         """
         docs = self._retriever.retrieve(request.query, k=request.k)
+        print('============= Docs =============')
+
+        pprint(docs)
+        
+        print('============= Docs =============')
 
         if not docs:
             logger.warning("RAGService: no documents retrieved for query: %r", request.query)

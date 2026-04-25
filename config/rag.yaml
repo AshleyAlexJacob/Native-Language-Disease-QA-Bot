@@ -9,7 +9,7 @@ chunking:
 
 embeddings:
   provider: "ollama"
-  model: "nomic-embed-text"
+  model: "nomic-embed-text-v2-moe"
   base_url: "http://localhost:11434"
 
 vectorstore:
@@ -18,11 +18,10 @@ vectorstore:
   collection_name: "who_health_docs"
 
 llm:
-  primary: "ollama"
+  primary: "google"
   fallback: "openrouter"
   temperature: 0.1
   max_tokens: 1024
   max_retries: 2
-  ollama_base_url: "http://localhost:11434"
-  ollama_model: "llama3.2:1b"
+  google_model: "gemini-2.5-flash"
   openrouter_model: "meta-llama/llama-3.2-3b-instruct:free"

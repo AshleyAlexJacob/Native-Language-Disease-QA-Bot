@@ -23,7 +23,7 @@ class RAGRetriever:
     def __init__(self, config_path: str | Path | None = None) -> None:
         self._service = VectorDBService(config_path)
 
-    def retrieve(self, query: str, k: int = 3) -> list[Document]:
+    def retrieve(self, query: str, k: int = 5) -> list[Document]:
         """Return the top-k most relevant Document chunks for a query.
 
         Args:
@@ -34,6 +34,7 @@ class RAGRetriever:
             List of Document objects ranked by relevance (scores stripped).
         """
         results = self._service.search(query, k=k)
+        print(results)
         docs = [doc for doc, _score in results]
         logger.debug("RAGRetriever: retrieved %d chunk(s) for query: %r", len(docs), query)
         return docs

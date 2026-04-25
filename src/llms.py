@@ -1,6 +1,7 @@
-"""LLM factory: builds ChatOllama (primary) with ChatOpenRouter as fallback."""
+"""LLM factory: builds ChatGoogleGenerativeAI (primary) with ChatOpenRouter as fallback."""
 
 import logging
+import os
 from pathlib import Path
 
 import yaml
@@ -18,10 +19,9 @@ load_dotenv(_PROJECT_ROOT / ".env")
 class LLMFactory:
     """Reads config/rag.yaml [llm] section and builds a LangChain chat model.
 
-    Returns ChatOllama as the primary model with ChatOpenRouter as an
-    automatic fallback via LangChain's .with_fallbacks(). If Ollama is
-    unavailable (connection error, model not found, timeout), the chain
-    transparently retries with OpenRouter.
+    Returns ChatGoogleGenerativeAI (Gemini 2.5 Flash) as the primary model with
+    ChatOpenRouter as an automatic fallback via LangChain's .with_fallbacks().
+    If the Google API call fails, the chain transparently retries with OpenRouter.
 
     Args:
         config_path: Path to rag.yaml. Defaults to config/rag.yaml.
@@ -44,36 +44,38 @@ class LLMFactory:
             raise KeyError("'llm' section missing from config/rag.yaml")
         return raw["llm"]
 
-    def _build_ollama(self) -> BaseChatModel:
-        from langchain_ollama import ChatOllama  # noqa: PLC0415
+    def _build_google(self) -> BaseChatModel:
+        from langchain_google_genai import ChatGoogleGenerativeAI  # noqa: PLC0415
 
-        return ChatOllama(
-            model=self._cfg.get("ollama_model", "llama3.1"),
-            base_url=self._cfg.get("ollama_base_url", "http://localhost:11434"),
+        return ChatGoogleGenerativeAI(
+            model=self._cfg.get("google_model", "gemini-2.5-flash-preview-04-17"),
+            google_api_key=os.environ["GOOGLE_API_KEY"],
             temperature=self._cfg.get("temperature", 0.1),
+            max_output_tokens=self._cfg.get("max_tokens", 1024),
+            max_retries=self._cfg.get("max_retries", 2),
         )
 
     def _build_openrouter(self) -> BaseChatModel:
         from langchain_openrouter import ChatOpenRouter  # noqa: PLC0415
 
         return ChatOpenRouter(
-            model=self._cfg.get("openrouter_model", "openai/gpt-4o-mini"),
+            model=self._cfg.get("openrouter_model", "meta-llama/llama-3.2-3b-instruct:free"),
             temperature=self._cfg.get("temperature", 0.1),
             max_tokens=self._cfg.get("max_tokens", 1024),
             max_retries=self._cfg.get("max_retries", 2),
         )
 
     def build(self) -> BaseChatModel:
-        """Build and return ChatOllama with ChatOpenRouter as automatic fallback.
+        """Build and return Gemini 2.5 Flash with ChatOpenRouter as automatic fallback.
 
         Returns:
-            RunnableWithFallbacks: Ollama primary, OpenRouter fallback.
+            RunnableWithFallbacks: Google Gemini primary, OpenRouter fallback.
         """
-        primary = self._build_ollama()
+        primary = self._build_google()
         fallback = self._build_openrouter()
         logger.info(
             "LLMFactory: primary=%s, fallback=%s",
-            self._cfg.get("ollama_model"),
+            self._cfg.get("google_model"),
             self._cfg.get("openrouter_model"),
         )
         return primary.with_fallbacks([fallback])

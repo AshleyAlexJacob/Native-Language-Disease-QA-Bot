@@ -16,6 +16,8 @@ logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(messag
 if __name__ == "__main__":
     svc = RAGService()
     result = svc.answer(QueryRequest(query="ملیریا کی علامات کیا ہیں؟", language="Urdu"))
+    # result = svc.answer(QueryRequest(query="What are the symptoms of Malaria?", language="Urdu"))
+    
     print("\n=== Answer ===")
     print(result["answer"])
     print("\n=== Sources ===")
