@@ -9,3 +9,4 @@
 2. uv venv
 3. Activate venv (source .venv/bin/activate)
 4. uv sync
+5. uvicorn main:app --reload

@@ -1,0 +1,91 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap');
+
+:root {
+  --primary: #008080;
+  --primary-dark: #006666;
+  --primary-container: #e3fffe;
+  --on-primary: #ffffff;
+  --on-primary-container: #002020;
+  
+  --secondary: #5c5f60;
+  --secondary-container: #e1e3e4;
+  --on-secondary-container: #626566;
+  
+  --surface: #ffffff;
+  --surface-variant: #f3f4f5;
+  --background: #f8f9fa;
+  
+  --on-surface: #191c1d;
+  --on-surface-variant: #3e4949;
+  
+  --outline: #e1e3e4;
+  --outline-variant: #bdc9c8;
+  
+  --error: #ba1a1a;
+  
+  --radius-sm: 4px;
+  --radius-base: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+  
+  --shadow-sm: 0px 2px 8px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0px 4px 20px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0px 10px 30px rgba(0, 0, 0, 0.08);
+  
+  --font-main: 'Manrope', system-ui, -apple-system, sans-serif;
+  
+  line-height: 1.6;
+  font-weight: 400;
+  font-family: var(--font-main);
+  
+  background-color: var(--background);
+  color: var(--on-surface);
+  
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: flex-start;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+#root {
+  width: 100%;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+h1, h2, h3, h4, h5 {
+  margin: 0;
+  font-weight: 600;
+  color: var(--on-surface);
+  line-height: 1.2;
+}
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+input {
+  font-family: inherit;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.clickable:hover {
+  opacity: 0.8;
+}
+

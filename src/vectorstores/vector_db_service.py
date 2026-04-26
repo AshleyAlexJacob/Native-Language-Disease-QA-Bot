@@ -72,6 +72,14 @@ class VectorDBService:
         """
         return self._store.as_retriever(**kwargs)
 
+    def list_sources(self) -> list[str]:
+        """Return sorted unique source_file values from all stored chunks."""
+        return self._store.list_sources()
+
+    def delete_by_source(self, source_file: str) -> int:
+        """Delete all chunks matching source_file. Returns count deleted."""
+        return self._store.delete_by_source(source_file)
+
     def reset(self) -> None:
         """Delete all documents from the ChromaDB collection.
 

@@ -110,6 +110,33 @@ class ChromaVectorStore:
         """
         return self._store.as_retriever(**kwargs)
 
+    def list_sources(self) -> list[str]:
+        """Return sorted unique source_file values from all stored chunks."""
+        result = self._store.get(include=["metadatas"])
+        seen: set[str] = set()
+        for meta in (result.get("metadatas") or []):
+            if meta and "source_file" in meta:
+                seen.add(meta["source_file"])
+        return sorted(seen)
+
+    def delete_by_source(self, source_file: str) -> int:
+        """Delete all chunks whose source_file metadata matches.
+
+        Args:
+            source_file: The filename to match against stored chunk metadata.
+
+        Returns:
+            Number of chunks deleted.
+        """
+        result = self._store.get(
+            where={"source_file": source_file}, include=["metadatas"]
+        )
+        ids: list[str] = result.get("ids") or []
+        if ids:
+            self._store.delete(ids=ids)
+            logger.info("Deleted %d chunk(s) for source_file=%r", len(ids), source_file)
+        return len(ids)
+
     def clear(self) -> None:
         """Delete and reinitialize the collection.
 
